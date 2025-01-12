@@ -14,7 +14,7 @@ import java.util.UUID;
 @Setter
 public class ClienteModel implements Serializable {
 
-    private static final long serialversionUID = 2L;
+    private static final long serialversionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -28,19 +28,19 @@ public class ClienteModel implements Serializable {
     private String cpf;
     @Embedded
     private Endereco endereco;
-    @Column(columnDefinition = "BOOLEAN DEFAULT false")
-    private boolean deletado = false;
+    @Column(nullable = false, columnDefinition = "INT DEFAULT 1")
+    private Integer status;
 
     public ClienteModel() {
     }
 
-    public ClienteModel(UUID id, String nome, String dataNascimento, String email, String cpf, Endereco endereco) {
+    public ClienteModel(UUID id, String nome, String dataNascimento, String email, String cpf, Integer status) {
         this.id = id;
         this.nome = nome;
         this.dataNascimento = dataNascimento;
         this.email = email;
         this.cpf = cpf;
-        this.endereco = endereco;
+        this.status = status;
     }
 }
 
