@@ -1,5 +1,6 @@
 package com.ecommerce.cliente.model;
 
+import com.ecommerce.cliente.embedded.Endereco;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +26,8 @@ public class ClienteModel implements Serializable {
     private String email;
     @Column(nullable = false, unique = true)
     private String cpf;
+    @Embedded
+    private Endereco endereco;
     @Column(nullable = false, columnDefinition = "INT DEFAULT 1")
     private Integer status;
 
