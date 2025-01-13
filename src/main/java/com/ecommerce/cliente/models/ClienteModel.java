@@ -1,4 +1,4 @@
-package com.ecommerce.cliente.model;
+package com.ecommerce.cliente.models;
 
 import com.ecommerce.cliente.embedded.Endereco;
 import jakarta.persistence.*;
