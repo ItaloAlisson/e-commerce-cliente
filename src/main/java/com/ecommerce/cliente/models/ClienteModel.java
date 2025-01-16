@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity()
@@ -14,14 +15,14 @@ import java.util.UUID;
 @Setter
 public class ClienteModel implements Serializable {
 
-    private static final long serialversionUID = 2L;
+    private static final long serialversionUID = 3L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     @Column(nullable = false)
     private String nome;
     @Column(nullable = false)
-    private String dataNascimento;
+    private LocalDate dataNascimento;
     @Column(nullable = false, unique = true)
     private String email;
     @Column(nullable = false, unique = true)
@@ -34,7 +35,7 @@ public class ClienteModel implements Serializable {
     public ClienteModel() {
     }
 
-    public ClienteModel(UUID id, String nome, String dataNascimento, String email, String cpf, Endereco endereco) {
+    public ClienteModel(UUID id, String nome, LocalDate dataNascimento, String email, String cpf, Endereco endereco) {
         this.id = id;
         this.nome = nome;
         this.dataNascimento = dataNascimento;
