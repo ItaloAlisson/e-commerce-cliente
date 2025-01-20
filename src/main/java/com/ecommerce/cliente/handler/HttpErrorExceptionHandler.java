@@ -26,7 +26,7 @@ public class HttpErrorExceptionHandler {
                 exception.getIdentifier());
 
     }
-
+    @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<String> BadRequest(BadRequestException exception){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());
