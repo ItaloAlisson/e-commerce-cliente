@@ -2,6 +2,7 @@ package com.ecommerce.cliente.dtos;
 
 import com.ecommerce.cliente.embedded.Endereco;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Embedded;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -22,6 +23,6 @@ public record ClienteRecordDTO(@NotBlank(message ="Campo 'nome' não pode estar 
                                @CPF(message = "CPF inválido!")
                                String cpf,
                                @Valid
-                               Endereco endereco,
-                               boolean deletado) {
+                               @Embedded
+                               EnderecoRecordDTO endereco) {
 }
