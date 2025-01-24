@@ -1,28 +1,33 @@
 package com.ecommerce.cliente.controllers;
 
 import com.ecommerce.cliente.dtos.ClienteRecordDTO;
+import com.ecommerce.cliente.models.ClienteModel;
 import com.ecommerce.cliente.services.ClienteService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/cliente")
+@RequestMapping(value = "/clientes")
 public class ClienteController {
     @Autowired
     private ClienteService clienteService;
 
     @PostMapping()
     public ResponseEntity<String> registrarCliente(@RequestBody @Valid ClienteRecordDTO clienteDTO) {
-
         return clienteService.registrarCliente(clienteDTO);
     }
 
-
+    @GetMapping()
+    public ResponseEntity<Page<ClienteModel>> buscarClientesAtivos(@PageableDefault(page = 0, size = 10,
+            sort = "dataNascimento", direction = Sort.Direction.ASC) Pageable paginado) {
+        return clienteService.buscarClientesAtivos(paginado);
+    }
 
 
 }

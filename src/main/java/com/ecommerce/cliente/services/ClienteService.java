@@ -8,6 +8,8 @@ import com.ecommerce.cliente.repositories.ClienteRepository;
 import com.ecommerce.cliente.validation.ClienteValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -36,5 +38,9 @@ public class ClienteService {
        clienteRepository.save(clienteModel);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body("Cliente registrado com sucesso!");
+    }
+
+    public ResponseEntity<Page<ClienteModel>> buscarClientesAtivos(Pageable paginado) {
+        return ResponseEntity.status(HttpStatus.OK).body(clienteRepository.findByAtivoTrue(paginado));
     }
 }
