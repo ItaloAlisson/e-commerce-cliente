@@ -27,7 +27,7 @@ public class ClienteService {
     private ClienteMapper clienteMapper;
 
     @Transactional
-    public ResponseEntity<Object> registrarCliente(ClienteRecordDTO clienteDTO) {
+    public ResponseEntity<String> registrarCliente(ClienteRecordDTO clienteDTO) {
         clienteValidator.existePorCpf(clienteDTO.cpf());
         clienteValidator.existePorEmail(clienteDTO.email());
         ClienteModel clienteModel = clienteMapper.dtoParaModel(clienteDTO);

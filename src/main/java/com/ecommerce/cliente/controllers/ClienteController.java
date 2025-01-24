@@ -17,10 +17,12 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @PostMapping()
-    public ResponseEntity<Object> registrarCliente(@RequestBody @Valid ClienteRecordDTO clienteDTO) {
+    public ResponseEntity<String> registrarCliente(@RequestBody @Valid ClienteRecordDTO clienteDTO) {
 
         return clienteService.registrarCliente(clienteDTO);
     }
+
+
 
 
 }
