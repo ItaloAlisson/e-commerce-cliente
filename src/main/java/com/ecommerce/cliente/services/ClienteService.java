@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ClienteService {
@@ -54,15 +55,15 @@ public class ClienteService {
                 + " não foi encontrado.");
     }
 
-    public ResponseEntity<String> atualizarDadosCliente(String cpf, ClienteRecordDTO clienteDTO){
-        Optional<ClienteModel> clienteOptional = clienteRepository.findByCpf(cpf);
+    public ResponseEntity<String> atualizarDadosCliente(UUID id, ClienteRecordDTO clienteDTO){
+        Optional<ClienteModel> clienteOptional = clienteRepository.findById(id);
         if (clienteOptional.isPresent()) {
             var clienteAtualizado = clienteMapper.dtoParaModel(clienteDTO);
-            clienteAtualizado.setId(clienteOptional.get().getId());
+            clienteAtualizado.setId(id);
             clienteRepository.save(clienteAtualizado);
             return ResponseEntity.status(HttpStatus.OK).body("Dados do cliente atualizados com sucesso!");
         }
-        throw new ResourceNotFoundException("Cliente com o CPF " + cpf
+        throw new ResourceNotFoundException("Cliente com o ID " + id
                 + " não foi encontrado.");
     }
 }

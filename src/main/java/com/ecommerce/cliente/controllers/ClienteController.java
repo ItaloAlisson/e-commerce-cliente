@@ -12,6 +12,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping(value = "/clientes")
 public class ClienteController {
@@ -34,10 +36,10 @@ public class ClienteController {
         return clienteService.buscarClientePorCpf(cpf);
     }
 
-    @PutMapping("/{cpf}")
-    public ResponseEntity<String> atualizarDadosCliente(@PathVariable(value = "cpf") String cpf,
-                                                           @RequestBody @Valid ClienteRecordDTO clienteDTO){
-        return clienteService.atualizarDadosCliente(cpf,clienteDTO);
+    @PutMapping("/{id}")
+    public ResponseEntity<String> atualizarDadosCliente(@PathVariable(value = "id") UUID id,
+                                                        @RequestBody @Valid ClienteRecordDTO clienteDTO){
+        return clienteService.atualizarDadosCliente(id,clienteDTO);
     }
 
 
