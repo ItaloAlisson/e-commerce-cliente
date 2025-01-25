@@ -15,13 +15,15 @@ public class ClienteValidator {
     public void existePorCpf(String cpf){
 
        if (clienteRepository.existsByCpf(cpf)){
-           throw new ConflictException("CPF já cadastrado");
+           throw new ConflictException("CPF " + cpf
+                   + " já cadastrado!");
        }
     }
 
     public void existePorEmail(String email){
         if (clienteRepository.existsByEmail(email)){
-            throw new ConflictException("E-mail já cadastrado!");
+            throw new ConflictException("E-mail " + email
+                    + " já cadastrado!");
         }
 
     }
