@@ -2,18 +2,22 @@ package com.ecommerce.cliente.services;
 
 import com.ecommerce.cliente.dtos.ClienteRecordDTO;
 import com.ecommerce.cliente.embedded.Endereco;
+import com.ecommerce.cliente.exceptions.ResourceNotFoundException;
 import com.ecommerce.cliente.mappers.ClienteMapper;
 import com.ecommerce.cliente.models.ClienteModel;
 import com.ecommerce.cliente.repositories.ClienteRepository;
 import com.ecommerce.cliente.validation.ClienteValidator;
 import jakarta.transaction.Transactional;
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -41,6 +45,16 @@ public class ClienteService {
     }
 
     public ResponseEntity<Page<ClienteModel>> buscarClientesAtivos(Pageable paginado) {
-        return ResponseEntity.status(HttpStatus.OK).body(clienteRepository.findByAtivoTrue(paginado));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(clienteRepository.findByAtivoTrue(paginado));
+    }
+
+    public ResponseEntity<ClienteModel> buscarClientePorCpf(String cpf) {
+        Optional<ClienteModel> cliente = clienteRepository.findByCpf(cpf);
+        if (cliente.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(cliente.get());
+        }
+        throw new ResourceNotFoundException("Cliente com o CPF " + cpf
+                + " não foi encontrado.");
     }
 }

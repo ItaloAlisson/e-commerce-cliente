@@ -29,5 +29,10 @@ public class ClienteController {
         return clienteService.buscarClientesAtivos(paginado);
     }
 
+    @GetMapping("/{cpf}")
+    public ResponseEntity<ClienteModel> buscarClientePorCpf(@PathVariable(value = "cpf") String cpf){
+        return clienteService.buscarClientePorCpf(cpf);
+    }
+
 
 }
