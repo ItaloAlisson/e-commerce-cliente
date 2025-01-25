@@ -34,5 +34,11 @@ public class ClienteController {
         return clienteService.buscarClientePorCpf(cpf);
     }
 
+    @PutMapping("/{cpf}")
+    public ResponseEntity<String> atualizarDadosCliente(@PathVariable(value = "cpf") String cpf,
+                                                           @RequestBody @Valid ClienteRecordDTO clienteDTO){
+        return clienteService.atualizarDadosCliente(cpf,clienteDTO);
+    }
+
 
 }
