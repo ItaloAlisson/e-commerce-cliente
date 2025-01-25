@@ -2,6 +2,7 @@ package com.ecommerce.cliente.handler;
 
 import com.ecommerce.cliente.exceptions.BadRequestException;
 import com.ecommerce.cliente.exceptions.ConflictException;
+import com.ecommerce.cliente.exceptions.ResourceNotFoundException;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +18,11 @@ public class HttpErrorExceptionHandler {
                 .body(exception.getMessage());
     }
 
-    @ExceptionHandler(ObjectNotFoundException.class)
-    public ResponseEntity<String> notFound(ObjectNotFoundException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                "Não foi encontrado o " +
-                        exception.getEntityName() +
-                        " com o ID" +
-                exception.getIdentifier());
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<String> notFound(ResourceNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(exception.getMessage());
+
 
     }
     @ExceptionHandler(BadRequestException.class)
@@ -31,6 +30,7 @@ public class HttpErrorExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());
     }
+
 
 
 }
