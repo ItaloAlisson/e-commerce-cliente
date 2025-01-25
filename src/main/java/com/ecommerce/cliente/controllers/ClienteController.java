@@ -1,6 +1,7 @@
 package com.ecommerce.cliente.controllers;
 
 import com.ecommerce.cliente.dtos.ClienteRecordDTO;
+import com.ecommerce.cliente.dtos.ClienteStatusRecordDTO;
 import com.ecommerce.cliente.models.ClienteModel;
 import com.ecommerce.cliente.services.ClienteService;
 import jakarta.validation.Valid;
@@ -40,6 +41,12 @@ public class ClienteController {
     public ResponseEntity<String> atualizarDadosCliente(@PathVariable(value = "id") UUID id,
                                                         @RequestBody @Valid ClienteRecordDTO clienteDTO){
         return clienteService.atualizarDadosCliente(id,clienteDTO);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<String> alternarStatusCliente(@PathVariable(value = "id") UUID id,
+                                                        @RequestBody ClienteStatusRecordDTO clienteStatusDTO){
+       return clienteService.alternarStatusCliente(id,clienteStatusDTO);
     }
 
 

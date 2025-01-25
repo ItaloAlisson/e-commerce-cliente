@@ -66,4 +66,16 @@ public class ClienteService {
         throw new ResourceNotFoundException("Cliente com o ID " + id
                 + " não foi encontrado.");
     }
+
+    public ResponseEntity<String> alternarStatusCliente(UUID id, ClienteStatusRecordDTO clienteStatusDTO) {
+        Optional<ClienteModel> clienteOptional = clienteRepository.findById(id);
+        if (clienteOptional.isPresent()) {
+            var clienteStatusAtualizado = clienteOptional.get();
+            clienteStatusAtualizado.setAtivo(clienteStatusDTO.ativo());
+            clienteRepository.save(clienteStatusAtualizado);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        throw new ResourceNotFoundException("Cliente com o ID " + id
+                + " não foi encontrado.");
+    }
 }
