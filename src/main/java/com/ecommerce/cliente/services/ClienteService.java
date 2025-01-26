@@ -79,4 +79,15 @@ public class ClienteService {
         throw new ResourceNotFoundException("Cliente com o ID " + id
                 + " não foi encontrado.");
     }
+
+    public ResponseEntity<Void> deletarCliente(UUID id) {
+        Optional<ClienteModel> clienteOptional = clienteRepository.findById(id);
+        if (clienteOptional.isPresent()) {
+            clienteRepository.delete(clienteOptional.get());
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        throw new ResourceNotFoundException("Cliente com o ID " + id
+                + " não foi encontrado.");
+
+    }
 }

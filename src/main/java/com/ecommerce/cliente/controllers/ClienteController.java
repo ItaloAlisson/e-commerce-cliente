@@ -33,20 +33,25 @@ public class ClienteController {
     }
 
     @GetMapping("/{cpf}")
-    public ResponseEntity<ClienteModel> buscarClientePorCpf(@PathVariable(value = "cpf") String cpf){
+    public ResponseEntity<ClienteModel> buscarClientePorCpf(@PathVariable(value = "cpf") String cpf) {
         return clienteService.buscarClienteAtivoPorCpf(cpf);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<String> atualizarDadosCliente(@PathVariable(value = "id") UUID id,
-                                                        @RequestBody @Valid ClienteRecordDTO clienteDTO){
-        return clienteService.atualizarDadosCliente(id,clienteDTO);
+                                                        @RequestBody @Valid ClienteRecordDTO clienteDTO) {
+        return clienteService.atualizarDadosCliente(id, clienteDTO);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<Void> alternarStatusCliente(@PathVariable(value = "id") UUID id,
-                                                        @RequestBody ClienteStatusRecordDTO clienteStatusDTO){
-       return clienteService.alternarStatusCliente(id,clienteStatusDTO);
+                                                      @RequestBody ClienteStatusRecordDTO clienteStatusDTO) {
+        return clienteService.alternarStatusCliente(id, clienteStatusDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarCliente(@PathVariable(value = "id") UUID id) {
+        return clienteService.deletarCliente(id);
     }
 
 
