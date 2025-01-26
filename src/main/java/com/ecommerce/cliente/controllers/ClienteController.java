@@ -37,6 +37,12 @@ public class ClienteController {
         return clienteService.buscarClienteAtivoPorCpf(cpf);
     }
 
+    @GetMapping("/inativos")
+    public ResponseEntity<Page<ClienteModel>> buscarClientesInativos(@PageableDefault(page = 0, size = 10,
+            sort = "dataNascimento", direction = Sort.Direction.ASC) Pageable paginado) {
+        return clienteService.buscarClientesInativos(paginado);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<String> atualizarDadosCliente(@PathVariable(value = "id") UUID id,
                                                         @RequestBody @Valid ClienteRecordDTO clienteDTO) {

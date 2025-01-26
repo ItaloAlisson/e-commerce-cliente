@@ -56,6 +56,11 @@ public class ClienteService {
                 + " não foi encontrado.");
     }
 
+    public ResponseEntity<Page<ClienteModel>> buscarClientesInativos(Pageable paginado) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(clienteRepository.findByAtivoFalse(paginado));
+    }
+
     public ResponseEntity<String> atualizarDadosCliente(UUID id, ClienteRecordDTO clienteDTO){
         Optional<ClienteModel> clienteOptional = clienteRepository.findById(id);
         if (clienteOptional.isPresent()) {
