@@ -34,7 +34,7 @@ public class ClienteService {
     public ResponseEntity<String> registrarCliente(ClienteRecordDTO clienteDTO) {
         clienteValidator.existePorCpf(clienteDTO.cpf());
         clienteValidator.existePorEmail(clienteDTO.email());
-        var novoCliente = clienteMapper.dtoParaModel(clienteDTO);
+        var novoCliente = clienteMapper.clienteDTOParaModel(clienteDTO);
         var endereco = clienteMapper.enderecoDTOParaEndereco(clienteDTO.endereco());
         novoCliente.setEndereco(endereco);
        clienteRepository.save(novoCliente);
@@ -59,7 +59,7 @@ public class ClienteService {
     public ResponseEntity<String> atualizarDadosCliente(UUID id, ClienteRecordDTO clienteDTO){
         Optional<ClienteModel> clienteOptional = clienteRepository.findById(id);
         if (clienteOptional.isPresent()) {
-            var clienteAtualizado = clienteMapper.dtoParaModel(clienteDTO);
+            var clienteAtualizado = clienteMapper.clienteDTOParaModel(clienteDTO);
             clienteAtualizado.setId(id);
             clienteRepository.save(clienteAtualizado);
             return ResponseEntity.status(HttpStatus.OK).body("Dados do cliente atualizados com sucesso!");
