@@ -43,6 +43,11 @@ public class ClienteController {
         return clienteService.buscarClientesInativos(paginado);
     }
 
+    @GetMapping("/inativo/{cpf}")
+    public ResponseEntity<ClienteModel> buscarClienteInativoPorCpf(@PathVariable(value = "cpf") String cpf) {
+        return clienteService.buscarClienteInativoPorCpf(cpf);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<String> atualizarDadosCliente(@PathVariable(value = "id") UUID id,
                                                         @RequestBody @Valid ClienteRecordDTO clienteDTO) {

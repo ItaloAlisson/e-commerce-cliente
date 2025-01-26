@@ -20,4 +20,6 @@ public interface ClienteRepository extends JpaRepository<ClienteModel, UUID> {
     Optional<ClienteModel> findByCpfAndAtivoTrue(String cpf);
 
     Page<ClienteModel> findByAtivoFalse(Pageable paginado);
+
+    Optional<ClienteModel> findByCpfAndAtivoFalse(String cpf);
 }

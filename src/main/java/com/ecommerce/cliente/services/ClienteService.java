@@ -61,6 +61,15 @@ public class ClienteService {
                 .body(clienteRepository.findByAtivoFalse(paginado));
     }
 
+    public ResponseEntity<ClienteModel> buscarClienteInativoPorCpf(String cpf) {
+        Optional<ClienteModel> cliente = clienteRepository.findByCpfAndAtivoFalse(cpf);
+        if (cliente.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(cliente.get());
+        }
+        throw new ResourceNotFoundException("Cliente com o CPF " + cpf
+                + " não foi encontrado.");
+    }
+
     public ResponseEntity<String> atualizarDadosCliente(UUID id, ClienteRecordDTO clienteDTO){
         Optional<ClienteModel> clienteOptional = clienteRepository.findById(id);
         if (clienteOptional.isPresent()) {
