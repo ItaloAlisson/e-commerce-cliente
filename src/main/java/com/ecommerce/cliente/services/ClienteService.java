@@ -70,6 +70,7 @@ public class ClienteService {
                 + " não foi encontrado.");
     }
 
+    @Transactional
     public ResponseEntity<String> atualizarDadosCliente(UUID id, ClienteRecordDTO clienteDTO){
         Optional<ClienteModel> clienteOptional = clienteRepository.findById(id);
         if (clienteOptional.isPresent()) {
@@ -82,6 +83,7 @@ public class ClienteService {
                 + " não foi encontrado.");
     }
 
+    @Transactional
     public ResponseEntity<Void> alternarStatusCliente(UUID id, ClienteStatusRecordDTO clienteStatusDTO) {
         Optional<ClienteModel> clienteOptional = clienteRepository.findById(id);
         if (clienteOptional.isPresent()) {
@@ -94,6 +96,7 @@ public class ClienteService {
                 + " não foi encontrado.");
     }
 
+    @Transactional
     public ResponseEntity<Void> deletarCliente(UUID id) {
         Optional<ClienteModel> clienteOptional = clienteRepository.findById(id);
         if (clienteOptional.isPresent()) {
