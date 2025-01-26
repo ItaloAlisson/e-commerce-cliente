@@ -44,7 +44,7 @@ public class ClienteController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<String> alternarStatusCliente(@PathVariable(value = "id") UUID id,
+    public ResponseEntity<Void> alternarStatusCliente(@PathVariable(value = "id") UUID id,
                                                         @RequestBody ClienteStatusRecordDTO clienteStatusDTO){
        return clienteService.alternarStatusCliente(id,clienteStatusDTO);
     }

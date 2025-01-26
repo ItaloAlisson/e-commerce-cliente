@@ -68,7 +68,7 @@ public class ClienteService {
                 + " não foi encontrado.");
     }
 
-    public ResponseEntity<String> alternarStatusCliente(UUID id, ClienteStatusRecordDTO clienteStatusDTO) {
+    public ResponseEntity<Void> alternarStatusCliente(UUID id, ClienteStatusRecordDTO clienteStatusDTO) {
         Optional<ClienteModel> clienteOptional = clienteRepository.findById(id);
         if (clienteOptional.isPresent()) {
             var clienteStatusAtualizado = clienteOptional.get();
