@@ -34,7 +34,7 @@ public class ClienteController {
 
     @GetMapping("/{cpf}")
     public ResponseEntity<ClienteModel> buscarClientePorCpf(@PathVariable(value = "cpf") String cpf){
-        return clienteService.buscarClientePorCpf(cpf);
+        return clienteService.buscarClienteAtivoPorCpf(cpf);
     }
 
     @PutMapping("/{id}")

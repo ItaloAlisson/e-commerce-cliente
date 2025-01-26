@@ -1,6 +1,7 @@
 package com.ecommerce.cliente.services;
 
 import com.ecommerce.cliente.dtos.ClienteRecordDTO;
+import com.ecommerce.cliente.dtos.ClienteStatusRecordDTO;
 import com.ecommerce.cliente.exceptions.ResourceNotFoundException;
 import com.ecommerce.cliente.mappers.ClienteMapper;
 import com.ecommerce.cliente.models.ClienteModel;
@@ -46,8 +47,8 @@ public class ClienteService {
                 .body(clienteRepository.findByAtivoTrue(paginado));
     }
 
-    public ResponseEntity<ClienteModel> buscarClientePorCpf(String cpf) {
-        Optional<ClienteModel> cliente = clienteRepository.findByCpf(cpf);
+    public ResponseEntity<ClienteModel> buscarClienteAtivoPorCpf(String cpf) {
+        Optional<ClienteModel> cliente = clienteRepository.findByCpfAndAtivoTrue(cpf);
         if (cliente.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(cliente.get());
         }

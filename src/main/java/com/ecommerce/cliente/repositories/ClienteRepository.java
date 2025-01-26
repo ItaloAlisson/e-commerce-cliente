@@ -1,7 +1,6 @@
 package com.ecommerce.cliente.repositories;
 
 import com.ecommerce.cliente.models.ClienteModel;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,5 +17,5 @@ public interface ClienteRepository extends JpaRepository<ClienteModel, UUID> {
 
     Page<ClienteModel> findByAtivoTrue(Pageable paginado);
 
-    Optional<ClienteModel> findByCpf(String cpf);
+    Optional<ClienteModel> findByCpfAndAtivoTrue(String cpf);
 }
