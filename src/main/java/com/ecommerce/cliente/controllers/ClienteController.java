@@ -33,7 +33,7 @@ public class ClienteController {
     }
 
     @GetMapping("/{cpf}")
-    public ResponseEntity<ClienteModel> buscarClientePorCpf(@PathVariable(value = "cpf") String cpf) {
+    public ResponseEntity<ClienteModel> buscarClienteAtivoPorCpf(@PathVariable(value = "cpf") String cpf) {
         return clienteService.buscarClienteAtivoPorCpf(cpf);
     }
 
