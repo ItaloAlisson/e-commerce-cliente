@@ -11,8 +11,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -31,15 +29,13 @@ public class ClienteService {
     private ClienteMapper clienteMapper;
 
     @Transactional
-    public ResponseEntity<String> registrarCliente(ClienteRecordDTO clienteDTO) {
+    public ClienteModel registrarCliente(ClienteRecordDTO clienteDTO) {
         clienteValidator.existePorCpf(clienteDTO.cpf());
         clienteValidator.existePorEmail(clienteDTO.email());
         var novoCliente = clienteMapper.clienteDTOParaModel(clienteDTO);
         var endereco = clienteMapper.enderecoDTOParaEndereco(clienteDTO.endereco());
         novoCliente.setEndereco(endereco);
-       clienteRepository.save(novoCliente);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body("Cliente registrado com sucesso!");
+        return clienteRepository.save(novoCliente);
     }
 
     public ResponseEntity<Page<ClienteModel>> buscarClientesAtivos(Pageable paginado) {
@@ -50,7 +46,7 @@ public class ClienteService {
     public ResponseEntity<ClienteModel> buscarClienteAtivoPorCpf(String cpf) {
         Optional<ClienteModel> cliente = clienteRepository.findByCpfAndAtivoTrue(cpf);
         if (cliente.isPresent()) {
-            return ResponseEntity.status(HttpStatus.OK).body(cliente.get());
+            return cliente.get();
         }
         throw new ResourceNotFoundException("Cliente com o CPF " + cpf
                 + " não foi encontrado.");
@@ -64,44 +60,44 @@ public class ClienteService {
     public ResponseEntity<ClienteModel> buscarClienteInativoPorCpf(String cpf) {
         Optional<ClienteModel> cliente = clienteRepository.findByCpfAndAtivoFalse(cpf);
         if (cliente.isPresent()) {
-            return ResponseEntity.status(HttpStatus.OK).body(cliente.get());
+            return cliente.get();
         }
         throw new ResourceNotFoundException("Cliente com o CPF " + cpf
                 + " não foi encontrado.");
     }
 
     @Transactional
-    public ResponseEntity<String> atualizarDadosCliente(UUID id, ClienteRecordDTO clienteDTO){
+    public ClienteModel atualizarDadosCliente(UUID id, ClienteRecordDTO clienteDTO) {
         Optional<ClienteModel> clienteOptional = clienteRepository.findById(id);
         if (clienteOptional.isPresent()) {
             var clienteAtualizado = clienteMapper.clienteDTOParaModel(clienteDTO);
             clienteAtualizado.setId(id);
             clienteRepository.save(clienteAtualizado);
-            return ResponseEntity.status(HttpStatus.OK).body("Dados do cliente atualizados com sucesso!");
+            return clienteAtualizado;
         }
         throw new ResourceNotFoundException("Cliente com o ID " + id
                 + " não foi encontrado.");
     }
 
     @Transactional
-    public ResponseEntity<Void> alternarStatusCliente(UUID id, ClienteStatusRecordDTO clienteStatusDTO) {
+    public void alternarStatusCliente(UUID id, ClienteStatusRecordDTO clienteStatusDTO) {
         Optional<ClienteModel> clienteOptional = clienteRepository.findById(id);
         if (clienteOptional.isPresent()) {
             var clienteStatusAtualizado = clienteOptional.get();
             clienteStatusAtualizado.setAtivo(clienteStatusDTO.ativo());
             clienteRepository.save(clienteStatusAtualizado);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            return;
         }
         throw new ResourceNotFoundException("Cliente com o ID " + id
                 + " não foi encontrado.");
     }
 
     @Transactional
-    public ResponseEntity<Void> deletarCliente(UUID id) {
+    public void deletarCliente(UUID id) {
         Optional<ClienteModel> clienteOptional = clienteRepository.findById(id);
         if (clienteOptional.isPresent()) {
             clienteRepository.delete(clienteOptional.get());
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            return;
         }
         throw new ResourceNotFoundException("Cliente com o ID " + id
                 + " não foi encontrado.");
