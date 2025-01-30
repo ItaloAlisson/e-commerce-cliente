@@ -9,6 +9,8 @@ import com.ecommerce.cliente.repositories.ClienteRepository;
 import com.ecommerce.cliente.validation.ClienteValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ public class ClienteService {
     @Autowired
     private ClienteMapper clienteMapper;
 
+    @CacheEvict(value = "clientes", allEntries = true)
     @Transactional
     public ClienteModel registrarCliente(ClienteRecordDTO clienteDTO) {
         clienteValidator.existePorCpf(clienteDTO.cpf());
@@ -38,12 +41,13 @@ public class ClienteService {
         return clienteRepository.save(novoCliente);
     }
 
-    public ResponseEntity<Page<ClienteModel>> buscarClientesAtivos(Pageable paginado) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(clienteRepository.findByAtivoTrue(paginado));
+    @Cacheable(value = "clientes", key = "#paginado.pageNumber + '-' + #paginado.pageSize")
+    public Page<ClienteModel> buscarClientesAtivos(Pageable paginado) {
+        return clienteRepository.findByAtivoTrue(paginado);
     }
 
-    public ResponseEntity<ClienteModel> buscarClienteAtivoPorCpf(String cpf) {
+    @Cacheable(value = "clientes", key = "#cpf")
+    public ClienteModel buscarClienteAtivoPorCpf(String cpf) {
         Optional<ClienteModel> cliente = clienteRepository.findByCpfAndAtivoTrue(cpf);
         if (cliente.isPresent()) {
             return cliente.get();
@@ -52,12 +56,13 @@ public class ClienteService {
                 + " não foi encontrado.");
     }
 
-    public ResponseEntity<Page<ClienteModel>> buscarClientesInativos(Pageable paginado) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(clienteRepository.findByAtivoFalse(paginado));
+    @Cacheable(value = "clientes", key = "#paginado.pageNumber + '-' + #paginado.pageSize")
+    public Page<ClienteModel> buscarClientesInativos(Pageable paginado) {
+        return clienteRepository.findByAtivoFalse(paginado);
     }
 
-    public ResponseEntity<ClienteModel> buscarClienteInativoPorCpf(String cpf) {
+    @Cacheable(value = "clientes", key = "#cpf")
+    public ClienteModel buscarClienteInativoPorCpf(String cpf) {
         Optional<ClienteModel> cliente = clienteRepository.findByCpfAndAtivoFalse(cpf);
         if (cliente.isPresent()) {
             return cliente.get();
@@ -66,6 +71,7 @@ public class ClienteService {
                 + " não foi encontrado.");
     }
 
+   @CacheEvict(value = "clientes", allEntries = true)
     @Transactional
     public ClienteModel atualizarDadosCliente(UUID id, ClienteRecordDTO clienteDTO) {
         Optional<ClienteModel> clienteOptional = clienteRepository.findById(id);
@@ -79,6 +85,7 @@ public class ClienteService {
                 + " não foi encontrado.");
     }
 
+    @CacheEvict(value = "clientes", allEntries = true)
     @Transactional
     public void alternarStatusCliente(UUID id, ClienteStatusRecordDTO clienteStatusDTO) {
         Optional<ClienteModel> clienteOptional = clienteRepository.findById(id);
@@ -92,6 +99,7 @@ public class ClienteService {
                 + " não foi encontrado.");
     }
 
+    @CacheEvict(value = "clientes", allEntries = true)
     @Transactional
     public void deletarCliente(UUID id) {
         Optional<ClienteModel> clienteOptional = clienteRepository.findById(id);
