@@ -5,10 +5,13 @@ import jakarta.persistence.Embeddable;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Embeddable
 @Getter
 @Setter
-public class Endereco {
+public class Endereco implements Serializable {
+    private static final long serialversionUID = 4L;
 
     @Column(nullable = false)
     private String logradouro;
