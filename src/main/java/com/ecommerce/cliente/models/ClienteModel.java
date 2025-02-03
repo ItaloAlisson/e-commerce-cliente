@@ -2,7 +2,9 @@ package com.ecommerce.cliente.models;
 
 import com.ecommerce.cliente.embedded.Endereco;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -13,6 +15,8 @@ import java.util.UUID;
 @Table(name = "CLIENTES")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ClienteModel implements Serializable {
 
     private static final long serialversionUID = 4L;
@@ -31,19 +35,6 @@ public class ClienteModel implements Serializable {
     private Endereco endereco;
     @Column(columnDefinition = "BOOLEAN DEFAULT true")
     private boolean ativo = true;
-
-    public ClienteModel() {
-    }
-
-    public ClienteModel(UUID id, String nome, LocalDate dataNascimento, String email, String cpf, Endereco endereco) {
-        this.id = id;
-        this.nome = nome;
-        this.dataNascimento = dataNascimento;
-        this.email = email;
-        this.cpf = cpf;
-        this.endereco = endereco;
-    }
-
 
 }
 
