@@ -129,8 +129,8 @@ public class ClienteServiceTest {
         verify(clienteRepository).findByAtivoTrue(pageable);
     }
 
-    @DisplayName("Quando buscar  clientes ativos por cpf" +
-            "            então retornar clientes")
+    @DisplayName("Quando buscar o cliente ativo por cpf" +
+            "            então retornar cliente")
     @Test
     void quandoBuscarClientesAtivosPorCpf_EntaoRetornarClientes() {
 
@@ -143,10 +143,10 @@ public class ClienteServiceTest {
         verify(clienteRepository).findByCpfAndAtivoTrue("745.303.692-50");
     }
 
-    @DisplayName("Quando buscar  clientes ativos por cpf inexistente" +
-            "            então retornar clientes")
+    @DisplayName("Quando buscar o cliente ativo por cpf inexistente" +
+            "            então lançar ResourceNotFoundException")
     @Test
-    void quandoBuscarClientesAtivosPorCpfInexistente_EntaoLancarResourceNotFoundException() {
+    void quandoBuscarClienteAtivoPorCpfInexistente_EntaoLancarResourceNotFoundException() {
 
     when(clienteRepository.findByCpfAndAtivoTrue("745.303.692-50")).thenReturn(Optional.empty());
 
@@ -159,7 +159,7 @@ public class ClienteServiceTest {
         verify(clienteRepository).findByCpfAndAtivoTrue("745.303.692-50");
     }
 
-    @DisplayName("Quando buscar  clientes inativos" +
+    @DisplayName("Quando buscar clientes inativos" +
             "            então retornar clientes")
     @Test
     void quandoBuscarClientesInativos_EntaoRetornarClientes() {
