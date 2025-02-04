@@ -132,7 +132,7 @@ public class ClienteServiceTest {
     @DisplayName("Quando buscar o cliente ativo por cpf" +
             "            então retornar cliente")
     @Test
-    void quandoBuscarClientesAtivosPorCpf_EntaoRetornarClientes() {
+    void quandoBuscarClienteAtivoPorCpf_EntaoRetornarCliente() {
 
         when(clienteRepository.findByCpfAndAtivoTrue("745.303.692-50")).thenReturn(Optional.ofNullable(clientes.get(0)));
 
@@ -148,7 +148,7 @@ public class ClienteServiceTest {
     @Test
     void quandoBuscarClienteAtivoPorCpfInexistente_EntaoLancarResourceNotFoundException() {
 
-    when(clienteRepository.findByCpfAndAtivoTrue("745.303.692-50")).thenReturn(Optional.empty());
+        when(clienteRepository.findByCpfAndAtivoTrue("745.303.692-50")).thenReturn(Optional.empty());
 
         var exception = assertThrows(ResourceNotFoundException.class,
                 () -> clienteService.buscarClienteAtivoPorCpf("745.303.692-50"));
@@ -175,6 +175,37 @@ public class ClienteServiceTest {
         assertNotNull(resultado);
         verify(clienteRepository).findByAtivoFalse(pageable);
     }
+
+    @DisplayName("Quando buscar o cliente inativo por cpf" +
+            "então retornar cliente")
+    @Test
+    void quandoBuscarClienteInativoPorCpf_EntaoRetornarCliente() {
+
+        when(clienteRepository.findByCpfAndAtivoFalse("123.456.789-01")).thenReturn(Optional.ofNullable(clientesInativos.get(0)));
+
+        var resultado = clienteService.buscarClienteInativoPorCpf("123.456.789-01");
+
+        assertNotNull(resultado);
+        assertEquals("123.456.789-01", resultado.getCpf());
+        verify(clienteRepository).findByCpfAndAtivoFalse("123.456.789-01");
+    }
+
+    @DisplayName("Quando buscar o cliente inativo por cpf inexistente" +
+            "            então lançar ResourceNotFoundException")
+    @Test
+    void quandoBuscarClienteInativoPorCpfInexistente_EntaoLancarResourceNotFoundException() {
+
+        when(clienteRepository.findByCpfAndAtivoFalse("123.456.789-01")).thenReturn(Optional.empty());
+
+        var exception = assertThrows(ResourceNotFoundException.class,
+                () -> clienteService.buscarClienteInativoPorCpf("123.456.789-01"));
+
+        assertEquals("Cliente com o CPF " +
+                "123.456.789-01" +
+                " não foi encontrado.", exception.getMessage());
+        verify(clienteRepository).findByCpfAndAtivoFalse("123.456.789-01");
+    }
+
 
 
 
