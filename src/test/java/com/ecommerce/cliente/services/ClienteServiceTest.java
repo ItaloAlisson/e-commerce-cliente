@@ -159,6 +159,23 @@ public class ClienteServiceTest {
         verify(clienteRepository).findByCpfAndAtivoTrue("745.303.692-50");
     }
 
+    @DisplayName("Quando buscar  clientes inativos" +
+            "            então retornar clientes")
+    @Test
+    void quandoBuscarClientesInativos_EntaoRetornarClientes() {
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<ClienteModel> paginaClientes = new PageImpl<>(List.of(clientesInativos.get(0),
+                clientesInativos.get(1)), pageable, 2);
+
+        when(clienteRepository.findByAtivoFalse(any(Pageable.class))).thenReturn(paginaClientes);
+
+        var resultado = clienteService.buscarClientesInativos(pageable);
+
+        assertNotNull(resultado);
+        verify(clienteRepository).findByAtivoFalse(pageable);
+    }
+
 
 
 }
