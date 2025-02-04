@@ -3,6 +3,7 @@ package com.ecommerce.cliente.services;
 import com.ecommerce.cliente.dtos.ClienteRecordDTO;
 import com.ecommerce.cliente.dtos.ClienteStatusRecordDTO;
 import com.ecommerce.cliente.exceptions.ConflictException;
+import com.ecommerce.cliente.exceptions.ResourceNotFoundException;
 import com.ecommerce.cliente.mappers.ClienteMapper;
 import com.ecommerce.cliente.models.ClienteModel;
 import com.ecommerce.cliente.repositories.ClienteRepository;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.ecommerce.cliente.TesteDataFactory.*;
 import static com.ecommerce.cliente.TesteDataFactory.iniciarClienteStatusRecordDTO;
@@ -126,6 +128,37 @@ public class ClienteServiceTest {
         assertNotNull(resultado);
         verify(clienteRepository).findByAtivoTrue(pageable);
     }
+
+    @DisplayName("Quando buscar  clientes ativos por cpf" +
+            "            então retornar clientes")
+    @Test
+    void quandoBuscarClientesAtivosPorCpf_EntaoRetornarClientes() {
+
+        when(clienteRepository.findByCpfAndAtivoTrue("745.303.692-50")).thenReturn(Optional.ofNullable(clientes.get(0)));
+
+        var resultado = clienteService.buscarClienteAtivoPorCpf("745.303.692-50");
+
+        assertNotNull(resultado);
+        assertEquals("745.303.692-50", resultado.getCpf());
+        verify(clienteRepository).findByCpfAndAtivoTrue("745.303.692-50");
+    }
+
+    @DisplayName("Quando buscar  clientes ativos por cpf inexistente" +
+            "            então retornar clientes")
+    @Test
+    void quandoBuscarClientesAtivosPorCpfInexistente_EntaoLancarResourceNotFoundException() {
+
+    when(clienteRepository.findByCpfAndAtivoTrue("745.303.692-50")).thenReturn(Optional.empty());
+
+        var exception = assertThrows(ResourceNotFoundException.class,
+                () -> clienteService.buscarClienteAtivoPorCpf("745.303.692-50"));
+
+        assertEquals("Cliente com o CPF " +
+                "745.303.692-50" +
+                " não foi encontrado.", exception.getMessage());
+        verify(clienteRepository).findByCpfAndAtivoTrue("745.303.692-50");
+    }
+
 
 
 }
