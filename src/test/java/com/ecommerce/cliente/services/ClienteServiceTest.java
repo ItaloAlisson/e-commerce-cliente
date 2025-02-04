@@ -23,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.ecommerce.cliente.TesteDataFactory.*;
 import static com.ecommerce.cliente.TesteDataFactory.iniciarClienteStatusRecordDTO;
@@ -148,15 +149,15 @@ public class ClienteServiceTest {
     @Test
     void quandoBuscarClienteAtivoPorCpfInexistente_EntaoLancarResourceNotFoundException() {
 
-        when(clienteRepository.findByCpfAndAtivoTrue("745.303.692-50")).thenReturn(Optional.empty());
+        when(clienteRepository.findByCpfAndAtivoTrue("462.789.844-40")).thenReturn(Optional.empty());
 
         var exception = assertThrows(ResourceNotFoundException.class,
-                () -> clienteService.buscarClienteAtivoPorCpf("745.303.692-50"));
+                () -> clienteService.buscarClienteAtivoPorCpf("462.789.844-40"));
 
         assertEquals("Cliente com o CPF " +
-                "745.303.692-50" +
+                "462.789.844-40" +
                 " não foi encontrado.", exception.getMessage());
-        verify(clienteRepository).findByCpfAndAtivoTrue("745.303.692-50");
+        verify(clienteRepository).findByCpfAndAtivoTrue("462.789.844-40");
     }
 
     @DisplayName("Quando buscar clientes inativos" +
@@ -204,6 +205,43 @@ public class ClienteServiceTest {
                 "123.456.789-01" +
                 " não foi encontrado.", exception.getMessage());
         verify(clienteRepository).findByCpfAndAtivoFalse("123.456.789-01");
+    }
+
+    @DisplayName(" Quando atualizar dados do cliente" +
+            "então retornar o cliente atualizado")
+    @Test
+    void quandoAtualizarDadosCliente_EntaoRetornarClienteAtualizado() {
+
+        when(clienteRepository.findById(UUID.fromString("7ecc1e5b-846c-4e64-ac61-a54b2656e1b3")))
+                .thenReturn(Optional.ofNullable(clientes.get(0)));
+        when(mapper.clienteDTOParaModel(clienteDTO.get(1))).thenReturn(clientes.get(2));
+        when(clienteRepository.save(any(ClienteModel.class))).thenReturn(clientes.get(2));
+
+        var resultado = clienteService.atualizarDadosCliente(UUID.fromString(
+                "7ecc1e5b-846c-4e64-ac61-a54b2656e1b3"),clienteDTO.get(1));
+
+        assertNotNull(resultado);
+        verify(clienteRepository).findById(UUID.fromString("7ecc1e5b-846c-4e64-ac61-a54b2656e1b3"));
+        verify(mapper).clienteDTOParaModel(clienteDTO.get(1));
+        verify(clienteRepository).save(clientes.get(2));
+    }
+
+    @DisplayName("Quando atualizar dados do cliente inexistente" +
+            "            então lançar ResourceNotFoundException")
+    @Test
+    void quandoAtualizarDadosClienteInexistente_EntaoLancarResourceNotFoundException() {
+
+        when(clienteRepository.findById(UUID.fromString("822fdfb3-02a7-4f57-b3e9-3925a3ab7865")))
+                .thenReturn(Optional.empty());
+
+        var exception = assertThrows(ResourceNotFoundException.class,
+                () -> clienteService.atualizarDadosCliente(UUID.fromString(
+                        "822fdfb3-02a7-4f57-b3e9-3925a3ab7865"),clienteDTO.get(0)));
+
+        assertEquals("Cliente com o ID " +
+                "822fdfb3-02a7-4f57-b3e9-3925a3ab7865" +
+                " não foi encontrado.", exception.getMessage());
+        verify(clienteRepository).findById(UUID.fromString("822fdfb3-02a7-4f57-b3e9-3925a3ab7865"));
     }
 
 
