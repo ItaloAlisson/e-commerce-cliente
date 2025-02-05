@@ -244,6 +244,72 @@ public class ClienteServiceTest {
         verify(clienteRepository).findById(UUID.fromString("822fdfb3-02a7-4f57-b3e9-3925a3ab7865"));
     }
 
+    @DisplayName(" Deve alternar o status do cliente")
+    @Test
+    void deveAlternarStatusCliente() {
+
+        when(clienteRepository.findById(UUID.fromString("7ecc1e5b-846c-4e64-ac61-a54b2656e1b3")))
+                .thenReturn(Optional.ofNullable(clientes.get(0)));
+
+        clienteService.alternarStatusCliente(UUID.fromString(
+                "7ecc1e5b-846c-4e64-ac61-a54b2656e1b3"),clienteStatusDTO);
+
+
+        verify(clienteRepository).findById(UUID.fromString("7ecc1e5b-846c-4e64-ac61-a54b2656e1b3"));
+       assertFalse(clientes.get(0).isAtivo());
+    }
+
+    @DisplayName("Quando alternar status do cliente inexistente" +
+            "            então lançar ResourceNotFoundException")
+    @Test
+    void quandoAlternarStatusClienteInexistente_EntaoLancarResourceNotFoundException() {
+
+        when(clienteRepository.findById(UUID.fromString("822fdfb3-02a7-4f57-b3e9-3925a3ab7865")))
+                .thenReturn(Optional.empty());
+
+        var exception = assertThrows(ResourceNotFoundException.class,
+                () -> clienteService.alternarStatusCliente(UUID.fromString(
+                        "822fdfb3-02a7-4f57-b3e9-3925a3ab7865"),clienteStatusDTO));
+
+        assertEquals("Cliente com o ID " +
+                "822fdfb3-02a7-4f57-b3e9-3925a3ab7865" +
+                " não foi encontrado.", exception.getMessage());
+        verify(clienteRepository).findById(UUID.fromString("822fdfb3-02a7-4f57-b3e9-3925a3ab7865"));
+    }
+
+    @DisplayName(" Deve deletar o cliente")
+    @Test
+    void deveDeletarCliente() {
+
+        when(clienteRepository.findById(UUID.fromString("7ecc1e5b-846c-4e64-ac61-a54b2656e1b3")))
+                .thenReturn(Optional.ofNullable(clientes.get(0)));
+
+        clienteService.deletarCliente(UUID.fromString(
+                "7ecc1e5b-846c-4e64-ac61-a54b2656e1b3"));
+
+
+        verify(clienteRepository).findById(UUID.fromString("7ecc1e5b-846c-4e64-ac61-a54b2656e1b3"));
+        verify(clienteRepository).delete(clientes.get(0));
+    }
+
+    @DisplayName("Quando deletar o cliente inexistente" +
+            "            então lançar ResourceNotFoundException")
+    @Test
+    void quandoDeletarClienteInexistente_EntaoLancarResourceNotFoundException() {
+
+        when(clienteRepository.findById(UUID.fromString("822fdfb3-02a7-4f57-b3e9-3925a3ab7865")))
+                .thenReturn(Optional.empty());
+
+        var exception = assertThrows(ResourceNotFoundException.class,
+                () -> clienteService.deletarCliente(UUID.fromString(
+                        "822fdfb3-02a7-4f57-b3e9-3925a3ab7865")));
+
+        assertEquals("Cliente com o ID " +
+                "822fdfb3-02a7-4f57-b3e9-3925a3ab7865" +
+                " não foi encontrado.", exception.getMessage());
+        verify(clienteRepository).findById(UUID.fromString("822fdfb3-02a7-4f57-b3e9-3925a3ab7865"));
+    }
+
 
 
 
