@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.ecommerce.cliente.TesteDataFactory.*;
-import static com.ecommerce.cliente.TesteDataFactory.iniciarClienteStatusRecordDTO;
+import static com.ecommerce.cliente.TesteDataFactory.clienteStatusRecordDTO;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -44,18 +44,20 @@ public class ClienteServiceTest {
     @Mock
     private ClienteMapper mapper;
 
-    private List<ClienteModel> clientes;
-    private List<ClienteModel> clientesInativos;
+    private List<ClienteModel> clientesDB;
+    private List<ClienteModel> clientesParaPersistencia;
+    private List<ClienteModel> clientesInativosDB;
     private List<ClienteRecordDTO> clienteDTO;
     private ClienteStatusRecordDTO clienteStatusDTO;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        clientes = inciarClientesAtivos();
-        clientesInativos = inciarClientesInativos();
-        clienteDTO = iniciarClienteDTO();
-        clienteStatusDTO = iniciarClienteStatusRecordDTO();
+        clientesDB = clientesAtivosDB();
+        clientesParaPersistencia = clientesParaPersistencia();
+        clientesInativosDB = clientesInativosDB();
+        clienteDTO = clienteDTO();
+        clienteStatusDTO = clienteStatusRecordDTO();
     }
 
     @DisplayName(" Quando registrar o cliente" +
@@ -65,16 +67,16 @@ public class ClienteServiceTest {
 
         doNothing().when(validator).existePorCpf(clienteDTO.get(0).cpf());
         doNothing().when(validator).existePorEmail(clienteDTO.get(0).email());
-        when(mapper.clienteDTOParaModel(clienteDTO.get(0))).thenReturn(clientes.get(0));
+        when(mapper.clienteDTOParaModel(clienteDTO.get(0))).thenReturn(clientesParaPersistencia.get(0));
         when(mapper.enderecoDTOParaEndereco(clienteDTO.get(0).endereco()))
-                .thenReturn(clientes.get(0).getEndereco());
-        when(clienteRepository.save(any(ClienteModel.class))).thenReturn(clientes.get(0));
+                .thenReturn(clientesParaPersistencia.get(0).getEndereco());
+        when(clienteRepository.save(any(ClienteModel.class))).thenReturn(clientesDB.get(0));
         var resultado = clienteService.registrarCliente(clienteDTO.get(0));
 
         assertNotNull(resultado);
         verify(validator).existePorCpf(clienteDTO.get(0).cpf());
         verify(validator).existePorEmail(clienteDTO.get(0).email());
-        verify(clienteRepository).save(clientes.get(0));
+        verify(clienteRepository).save(clientesParaPersistencia.get(0));
     }
 
     @DisplayName(" Quando registrar o cliente com cpf existente" +
@@ -113,14 +115,14 @@ public class ClienteServiceTest {
         verify(validator).existePorEmail(clienteDTO.get(0).email());
     }
 
-    @DisplayName("Quando buscar  clientes ativos" +
-            "            então retornar clientes")
+    @DisplayName("Quando buscar  clientesDB ativos" +
+            "            então retornar clientesDB")
     @Test
     void quandoBuscarClientesAtivos_EntaoRetornarClientes() {
 
         Pageable pageable = PageRequest.of(0, 10);
-        Page<ClienteModel> paginaClientes = new PageImpl<>(List.of(clientes.get(0),
-                clientes.get(1)), pageable, 2);
+        Page<ClienteModel> paginaClientes = new PageImpl<>(List.of(clientesDB.get(0),
+                clientesDB.get(1)), pageable, 2);
 
         when(clienteRepository.findByAtivoTrue(any(Pageable.class))).thenReturn(paginaClientes);
 
@@ -135,7 +137,7 @@ public class ClienteServiceTest {
     @Test
     void quandoBuscarClienteAtivoPorCpf_EntaoRetornarCliente() {
 
-        when(clienteRepository.findByCpfAndAtivoTrue("745.303.692-50")).thenReturn(Optional.ofNullable(clientes.get(0)));
+        when(clienteRepository.findByCpfAndAtivoTrue("745.303.692-50")).thenReturn(Optional.ofNullable(clientesDB.get(0)));
 
         var resultado = clienteService.buscarClienteAtivoPorCpf("745.303.692-50");
 
@@ -160,14 +162,14 @@ public class ClienteServiceTest {
         verify(clienteRepository).findByCpfAndAtivoTrue("462.789.844-40");
     }
 
-    @DisplayName("Quando buscar clientes inativos" +
-            "            então retornar clientes")
+    @DisplayName("Quando buscar clientesDB inativos" +
+            "            então retornar clientesDB")
     @Test
     void quandoBuscarClientesInativos_EntaoRetornarClientes() {
 
         Pageable pageable = PageRequest.of(0, 10);
-        Page<ClienteModel> paginaClientes = new PageImpl<>(List.of(clientesInativos.get(0),
-                clientesInativos.get(1)), pageable, 2);
+        Page<ClienteModel> paginaClientes = new PageImpl<>(List.of(clientesInativosDB.get(0),
+                clientesInativosDB.get(1)), pageable, 2);
 
         when(clienteRepository.findByAtivoFalse(any(Pageable.class))).thenReturn(paginaClientes);
 
@@ -182,7 +184,7 @@ public class ClienteServiceTest {
     @Test
     void quandoBuscarClienteInativoPorCpf_EntaoRetornarCliente() {
 
-        when(clienteRepository.findByCpfAndAtivoFalse("123.456.789-01")).thenReturn(Optional.ofNullable(clientesInativos.get(0)));
+        when(clienteRepository.findByCpfAndAtivoFalse("123.456.789-01")).thenReturn(Optional.ofNullable(clientesInativosDB.get(0)));
 
         var resultado = clienteService.buscarClienteInativoPorCpf("123.456.789-01");
 
@@ -213,9 +215,9 @@ public class ClienteServiceTest {
     void quandoAtualizarDadosCliente_EntaoRetornarClienteAtualizado() {
 
         when(clienteRepository.findById(UUID.fromString("7ecc1e5b-846c-4e64-ac61-a54b2656e1b3")))
-                .thenReturn(Optional.ofNullable(clientes.get(0)));
-        when(mapper.clienteDTOParaModel(clienteDTO.get(1))).thenReturn(clientes.get(2));
-        when(clienteRepository.save(any(ClienteModel.class))).thenReturn(clientes.get(2));
+                .thenReturn(Optional.ofNullable(clientesDB.get(0)));
+        when(mapper.clienteDTOParaModel(clienteDTO.get(1))).thenReturn(clientesParaPersistencia.get(1));
+        when(clienteRepository.save(any(ClienteModel.class))).thenReturn(clientesDB.get(2));
 
         var resultado = clienteService.atualizarDadosCliente(UUID.fromString(
                 "7ecc1e5b-846c-4e64-ac61-a54b2656e1b3"),clienteDTO.get(1));
@@ -223,7 +225,7 @@ public class ClienteServiceTest {
         assertNotNull(resultado);
         verify(clienteRepository).findById(UUID.fromString("7ecc1e5b-846c-4e64-ac61-a54b2656e1b3"));
         verify(mapper).clienteDTOParaModel(clienteDTO.get(1));
-        verify(clienteRepository).save(clientes.get(2));
+        verify(clienteRepository).save(clientesParaPersistencia.get(1));
     }
 
     @DisplayName("Quando atualizar dados do cliente inexistente" +
@@ -249,14 +251,14 @@ public class ClienteServiceTest {
     void deveAlternarStatusCliente() {
 
         when(clienteRepository.findById(UUID.fromString("7ecc1e5b-846c-4e64-ac61-a54b2656e1b3")))
-                .thenReturn(Optional.ofNullable(clientes.get(0)));
+                .thenReturn(Optional.ofNullable(clientesDB.get(0)));
 
         clienteService.alternarStatusCliente(UUID.fromString(
                 "7ecc1e5b-846c-4e64-ac61-a54b2656e1b3"),clienteStatusDTO);
 
 
         verify(clienteRepository).findById(UUID.fromString("7ecc1e5b-846c-4e64-ac61-a54b2656e1b3"));
-       assertFalse(clientes.get(0).isAtivo());
+       assertFalse(clientesDB.get(0).isAtivo());
     }
 
     @DisplayName("Quando alternar status do cliente inexistente" +
@@ -282,14 +284,14 @@ public class ClienteServiceTest {
     void deveDeletarCliente() {
 
         when(clienteRepository.findById(UUID.fromString("7ecc1e5b-846c-4e64-ac61-a54b2656e1b3")))
-                .thenReturn(Optional.ofNullable(clientes.get(0)));
+                .thenReturn(Optional.ofNullable(clientesDB.get(0)));
 
         clienteService.deletarCliente(UUID.fromString(
                 "7ecc1e5b-846c-4e64-ac61-a54b2656e1b3"));
 
 
         verify(clienteRepository).findById(UUID.fromString("7ecc1e5b-846c-4e64-ac61-a54b2656e1b3"));
-        verify(clienteRepository).delete(clientes.get(0));
+        verify(clienteRepository).delete(clientesDB.get(0));
     }
 
     @DisplayName("Quando deletar o cliente inexistente" +

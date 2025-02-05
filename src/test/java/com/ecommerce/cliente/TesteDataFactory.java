@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public class TesteDataFactory {
 
-    public static List<ClienteRecordDTO> iniciarClienteDTO() {
+    public static List<ClienteRecordDTO> clienteDTO() {
 
         List<ClienteRecordDTO> clientesRecordDTO = new ArrayList<>();
 
@@ -54,12 +54,12 @@ public class TesteDataFactory {
         return clientesRecordDTO;
     }
 
-    public static ClienteStatusRecordDTO iniciarClienteStatusRecordDTO(){
+    public static ClienteStatusRecordDTO clienteStatusRecordDTO(){
        return new ClienteStatusRecordDTO(false);
 
     }
 
-    public static List<ClienteModel> inciarClientesAtivos() {
+    public static List<ClienteModel> clientesAtivosDB() {
 
         List<ClienteModel> clientes = new ArrayList<>();
 
@@ -120,7 +120,49 @@ public class TesteDataFactory {
         return clientes;
 
     }
-    public static List<ClienteModel> inciarClientesInativos() {
+
+    public static List<ClienteModel> clientesParaPersistencia(){
+        List<ClienteModel> clientes = new ArrayList<>();
+
+        var endereco = new Endereco(
+                "Avenida Paulista",
+                "1000",
+                "Bela Vista",
+                "São Paulo",
+                "SP",
+                "01310-100"
+        );
+
+        var cliente = new ClienteModel(
+                "Rodrigo Alves",
+                LocalDate.of(2002, 02, 07),
+                "teste@gmail.com",
+                "745.303.692-50",
+                endereco);
+
+        var enderecoAtualizado = new Endereco(
+                "Rua dos Três Poderes",
+                "2045",
+                "Vila Mariana",
+                "Rio de Janeiro",
+                "RJ",
+                "22040-200"
+        );
+
+        var clienteAtualizado = new ClienteModel(
+                "Rodrigo Alves",
+                LocalDate.of(2002, 02, 07),
+                "rodrigo@hotmail.com",
+                "745.303.692-50",
+                enderecoAtualizado);
+
+        clientes.add(cliente);
+        clientes.add(clienteAtualizado);
+        return clientes;
+
+    }
+
+    public static List<ClienteModel> clientesInativosDB() {
 
         List<ClienteModel> clientes = new ArrayList<>();
 

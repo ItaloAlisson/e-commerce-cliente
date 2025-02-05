@@ -36,5 +36,12 @@ public class ClienteModel implements Serializable {
     @Column(columnDefinition = "BOOLEAN DEFAULT true")
     private boolean ativo = true;
 
+    public ClienteModel(String nome, LocalDate dataNascimento, String email, String cpf, Endereco endereco) {
+        this.nome = nome;
+        this.dataNascimento = dataNascimento;
+        this.email = email;
+        this.cpf = cpf;
+        this.endereco = endereco;
+    }
 }
 

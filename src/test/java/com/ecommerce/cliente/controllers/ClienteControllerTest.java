@@ -2,7 +2,6 @@ package com.ecommerce.cliente.controllers;
 
 import com.ecommerce.cliente.dtos.ClienteRecordDTO;
 import com.ecommerce.cliente.dtos.ClienteStatusRecordDTO;
-import com.ecommerce.cliente.exceptions.ResourceNotFoundException;
 import com.ecommerce.cliente.models.ClienteModel;
 import com.ecommerce.cliente.services.ClienteService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,8 +45,8 @@ public class ClienteControllerTest {
     @MockitoBean
     private ClienteService clienteService;
 
-    private List<ClienteModel> clientes;
-    private List<ClienteModel> clientesInativos;
+    private List<ClienteModel> clientesDB;
+    private List<ClienteModel> clientesInativosDB;
     private List<ClienteRecordDTO> clienteDTO;
     private ClienteStatusRecordDTO clienteStatusDTO;
 
@@ -55,10 +54,10 @@ public class ClienteControllerTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        clientes = inciarClientesAtivos();
-        clientesInativos = inciarClientesInativos();
-        clienteDTO = iniciarClienteDTO();
-        clienteStatusDTO = iniciarClienteStatusRecordDTO();
+        clientesDB = clientesAtivosDB();
+        clientesInativosDB = clientesInativosDB();
+        clienteDTO = clienteDTO();
+        clienteStatusDTO = clienteStatusRecordDTO();
     }
 
 
@@ -67,9 +66,9 @@ public class ClienteControllerTest {
     @Test
     void quandoRegistrarCliente_EntaoRetornarClienteRegistradoComHttpStatus201() throws Exception {
 
-        when(clienteService.registrarCliente(any(ClienteRecordDTO.class))).thenReturn(clientes.get(0));
+        when(clienteService.registrarCliente(any(ClienteRecordDTO.class))).thenReturn(clientesDB.get(0));
 
-        ResultActions resultado = mock.perform(post("/clientes")
+        ResultActions resultado = mock.perform(post("/clientesDB")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(clienteDTO.get(0))));
 
@@ -81,18 +80,18 @@ public class ClienteControllerTest {
                 .andExpect(jsonPath("$.ativo").value(true));
     }
 
-    @DisplayName(" Quando buscar clientes ativos, " +
-            "então retornar clientes com http status 200")
+    @DisplayName(" Quando buscar clientesDB ativos, " +
+            "então retornar clientesDB com http status 200")
     @Test
     void quandoBuscarClientesAtivos_EntaoRetornarClientesComHttpStatus200() throws Exception {
 
         Pageable pageable = PageRequest.of(0, 10);
-        Page<ClienteModel> paginaClientes = new PageImpl<>(List.of(clientes.get(0),
-                clientes.get(1)), pageable, 2);
+        Page<ClienteModel> paginaClientes = new PageImpl<>(List.of(clientesDB.get(0),
+                clientesDB.get(1)), pageable, 2);
 
         when(clienteService.buscarClientesAtivos(any(Pageable.class))).thenReturn(paginaClientes);
 
-        ResultActions resultado = mock.perform(get("/clientes")
+        ResultActions resultado = mock.perform(get("/clientesDB")
                 .param("page", "0")
                 .param("size", "10")
                 .contentType(MediaType.APPLICATION_JSON));
@@ -108,9 +107,9 @@ public class ClienteControllerTest {
     void quandoBuscarClienteAtivoPorCpf_EntaoRetornarClienteComHttpStatus200() throws Exception {
 
         when(clienteService.buscarClienteAtivoPorCpf("745.303.692-50"))
-                .thenReturn(clientes.get(0));
+                .thenReturn(clientesDB.get(0));
 
-        ResultActions resultado = mock.perform(get("/clientes/745.303.692-50")
+        ResultActions resultado = mock.perform(get("/clientesDB/745.303.692-50")
                 .contentType(MediaType.APPLICATION_JSON));
 
         resultado.andDo(print())
@@ -121,19 +120,19 @@ public class ClienteControllerTest {
                 .andExpect(jsonPath("$.ativo").value(true));
     }
 
-    @DisplayName(" Quando buscar clientes inativos, " +
-            "então retornar clientes com http status 200")
+    @DisplayName(" Quando buscar clientesDB inativos, " +
+            "então retornar clientesDB com http status 200")
     @Test
     void quandoBuscarClientesInativos_EntaoRetornarClientesComHttpStatus200() throws Exception {
 
         Pageable pageable = PageRequest.of(0, 10);
-        Page<ClienteModel> paginaClientes = new PageImpl<>(List.of(clientesInativos.get(0),
-                clientesInativos.get(1)), pageable, 2);
+        Page<ClienteModel> paginaClientes = new PageImpl<>(List.of(clientesInativosDB.get(0),
+                clientesInativosDB.get(1)), pageable, 2);
 
         when(clienteService.buscarClientesInativos(any(Pageable.class)))
                 .thenReturn(paginaClientes);
 
-        ResultActions resultado = mock.perform(get("/clientes/inativos")
+        ResultActions resultado = mock.perform(get("/clientesDB/inativos")
                 .param("page", "0")
                 .param("size", "10")
                 .contentType(MediaType.APPLICATION_JSON));
@@ -148,10 +147,10 @@ public class ClienteControllerTest {
     @Test
     void quandoBuscarClienteInativoPorCpf_EntaoRetornarClienteComHttpStatus200() throws Exception {
 
-        when(clienteService.buscarClienteInativoPorCpf("123.456.789-01")).thenReturn(clientesInativos.get(0));
+        when(clienteService.buscarClienteInativoPorCpf("123.456.789-01")).thenReturn(clientesInativosDB.get(0));
 
         ResultActions resultado = mock.perform(
-                get("/clientes/inativo/123.456.789-01")
+                get("/clientesDB/inativo/123.456.789-01")
                 .contentType(MediaType.APPLICATION_JSON));
 
         resultado.andDo(print())
@@ -168,10 +167,10 @@ public class ClienteControllerTest {
     void quandoAtualizarDadosCliente_EntaoRetornarClienteAtualizadoComHttpStatus200() throws Exception {
 
         when(clienteService.atualizarDadosCliente(any(UUID.class),
-                any(ClienteRecordDTO.class))).thenReturn(clientes.get(2));
+                any(ClienteRecordDTO.class))).thenReturn(clientesDB.get(2));
 
         ResultActions resultado = mock.perform(
-                put("/clientes/7ecc1e5b-846c-4e64-ac61-a54b2656e1b3")
+                put("/clientesDB/7ecc1e5b-846c-4e64-ac61-a54b2656e1b3")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(clienteDTO.get(1))));
 
@@ -191,7 +190,7 @@ public class ClienteControllerTest {
         doNothing().when(clienteService).alternarStatusCliente(any(UUID.class),
                 any(ClienteStatusRecordDTO.class));
         ResultActions resultado = mock.perform(
-                patch("/clientes/7ecc1e5b-846c-4e64-ac61-a54b2656e1b3")
+                patch("/clientesDB/7ecc1e5b-846c-4e64-ac61-a54b2656e1b3")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(clienteStatusDTO)));
 
@@ -207,7 +206,7 @@ public class ClienteControllerTest {
         doNothing().when(clienteService).deletarCliente(any(UUID.class));
 
         ResultActions resultado = mock.perform(
-                delete("/clientes/7ecc1e5b-846c-4e64-ac61-a54b2656e1b3"));
+                delete("/clientesDB/7ecc1e5b-846c-4e64-ac61-a54b2656e1b3"));
 
         resultado.andDo(print())
                 .andExpect(status().isNoContent());

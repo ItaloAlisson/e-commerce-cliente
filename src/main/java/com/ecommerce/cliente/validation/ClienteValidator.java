@@ -2,8 +2,6 @@ package com.ecommerce.cliente.validation;
 
 import com.ecommerce.cliente.exceptions.ConflictException;
 import com.ecommerce.cliente.repositories.ClienteRepository;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
