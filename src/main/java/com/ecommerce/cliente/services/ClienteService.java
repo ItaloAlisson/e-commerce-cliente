@@ -54,12 +54,8 @@ public class ClienteService {
 
     @Cacheable(value = "clientes", key = "#cpf")
     public ClienteModel buscarClienteAtivoPorCpf(String cpf) {
-        Optional<ClienteModel> cliente = clienteRepository.findByCpfAndAtivoTrue(cpf);
-        if (cliente.isPresent()) {
-            return cliente.get();
-        }
-        throw new ResourceNotFoundException("Cliente com o CPF " + cpf
-                + " não foi encontrado.");
+        return clienteRepository.findByCpfAndAtivoTrue(cpf).orElseThrow(()->
+                new ResourceNotFoundException("Cliente com o CPF " + cpf + " não foi encontrado."));
     }
 
     @Cacheable(value = "clientes", key = "#paginado.pageNumber + '-' + #paginado.pageSize")
@@ -69,52 +65,39 @@ public class ClienteService {
 
     @Cacheable(value = "clientes", key = "#cpf")
     public ClienteModel buscarClienteInativoPorCpf(String cpf) {
-        Optional<ClienteModel> cliente = clienteRepository.findByCpfAndAtivoFalse(cpf);
-        if (cliente.isPresent()) {
-            return cliente.get();
-        }
-        throw new ResourceNotFoundException("Cliente com o CPF " + cpf
-                + " não foi encontrado.");
+        return clienteRepository.findByCpfAndAtivoFalse(cpf).orElseThrow(()->
+                new ResourceNotFoundException("Cliente com o CPF " + cpf + " não foi encontrado."));
     }
 
    @CacheEvict(value = "clientes", allEntries = true)
     @Transactional
     public ClienteModel atualizarDadosCliente(UUID id, ClienteRecordDTO clienteDTO) {
-        Optional<ClienteModel> clienteOptional = clienteRepository.findById(id);
-        if (clienteOptional.isPresent()) {
-            var clienteAtualizado = clienteMapper.clienteDTOParaModel(clienteDTO);
-            clienteAtualizado.setId(id);
-            clienteRepository.save(clienteAtualizado);
-            return clienteAtualizado;
-        }
-        throw new ResourceNotFoundException("Cliente com o ID " + id
-                + " não foi encontrado.");
+        var cliente = clienteRepository.findById(id)
+                .orElseThrow(()-> new ResourceNotFoundException("Cliente com o ID " + id
+                        + " não foi encontrado."));
+
+            BeanUtils.copyProperties(clienteDTO,cliente,"id");
+            return clienteRepository.save(cliente);
     }
 
     @CacheEvict(value = "clientes", allEntries = true)
     @Transactional
     public void alternarStatusCliente(UUID id, ClienteStatusRecordDTO clienteStatusDTO) {
-        Optional<ClienteModel> clienteOptional = clienteRepository.findById(id);
-        if (clienteOptional.isPresent()) {
-            var clienteStatusAtualizado = clienteOptional.get();
-            clienteStatusAtualizado.setAtivo(clienteStatusDTO.ativo());
-            clienteRepository.save(clienteStatusAtualizado);
-            return;
-        }
-        throw new ResourceNotFoundException("Cliente com o ID " + id
-                + " não foi encontrado.");
+        var cliente = clienteRepository.findById(id)
+                .orElseThrow(()-> new ResourceNotFoundException("Cliente com o ID " + id
+                        + " não foi encontrado."));
+
+        cliente.setAtivo(clienteStatusDTO.ativo());
+            clienteRepository.save(cliente);
     }
 
     @CacheEvict(value = "clientes", allEntries = true)
     @Transactional
     public void deletarCliente(UUID id) {
-        Optional<ClienteModel> clienteOptional = clienteRepository.findById(id);
-        if (clienteOptional.isPresent()) {
-            clienteRepository.delete(clienteOptional.get());
-            return;
-        }
-        throw new ResourceNotFoundException("Cliente com o ID " + id
-                + " não foi encontrado.");
+        var cliente = clienteRepository.findById(id)
+                .orElseThrow(()-> new ResourceNotFoundException("Cliente com o ID " + id
+                        + " não foi encontrado."));
 
+            clienteRepository.delete(cliente);
     }
 }
