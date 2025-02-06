@@ -8,6 +8,7 @@ import com.ecommerce.cliente.models.ClienteModel;
 import com.ecommerce.cliente.repositories.ClienteRepository;
 import com.ecommerce.cliente.validation.ClienteValidator;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -21,14 +22,19 @@ import java.util.UUID;
 @Service
 public class ClienteService {
 
-    @Autowired
-    private ClienteRepository clienteRepository;
 
-    @Autowired
-    private ClienteValidator clienteValidator;
+    private  ClienteRepository clienteRepository;
 
-    @Autowired
-    private ClienteMapper clienteMapper;
+    private  ClienteValidator clienteValidator;
+
+    private  ClienteMapper clienteMapper;
+
+    public ClienteService(ClienteRepository clienteRepository, ClienteValidator clienteValidator, ClienteMapper clienteMapper) {
+        this.clienteRepository = clienteRepository;
+        this.clienteValidator = clienteValidator;
+        this.clienteMapper = clienteMapper;
+    }
+
 
     @CacheEvict(value = "clientes", allEntries = true)
     @Transactional

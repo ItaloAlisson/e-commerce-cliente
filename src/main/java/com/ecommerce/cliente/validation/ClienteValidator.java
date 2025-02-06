@@ -7,11 +7,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ClienteValidator {
-    @Autowired
-    private ClienteRepository clienteRepository;
+
+    private  ClienteRepository clienteRepository;
+
+    public ClienteValidator(ClienteRepository clienteRepository) {
+        this.clienteRepository = clienteRepository;
+    }
 
     public void existePorCpf(String cpf){
-
        if (clienteRepository.existsByCpf(cpf)){
            throw new ConflictException("CPF " + cpf
                    + " já cadastrado!");

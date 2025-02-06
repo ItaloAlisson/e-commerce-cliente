@@ -19,8 +19,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping(value = "/clientes")
 public class ClienteController {
-    @Autowired
-    private ClienteService clienteService;
+
+    private  ClienteService clienteService;
+
+    public ClienteController(ClienteService clienteService) {
+        this.clienteService = clienteService;
+    }
 
     @PostMapping()
     public ResponseEntity<ClienteModel> registrarCliente(@RequestBody @Valid ClienteRecordDTO clienteDTO) {
