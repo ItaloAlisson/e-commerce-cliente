@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -70,7 +71,7 @@ public class ClienteServiceTest {
         when(mapper.clienteDTOParaModel(clienteDTO.get(0))).thenReturn(clientesParaPersistencia.get(0));
         when(mapper.enderecoDTOParaEndereco(clienteDTO.get(0).endereco()))
                 .thenReturn(clientesParaPersistencia.get(0).getEndereco());
-        when(clienteRepository.save(any(ClienteModel.class))).thenReturn(clientesDB.get(0));
+        when(clienteRepository.save(clientesParaPersistencia.get(0))).thenReturn(clientesDB.get(0));
         var resultado = clienteService.registrarCliente(clienteDTO.get(0));
 
         assertNotNull(resultado);
@@ -115,7 +116,7 @@ public class ClienteServiceTest {
         verify(validator).existePorEmail(clienteDTO.get(0).email());
     }
 
-    @DisplayName("Quando buscar  clientesDB ativos" +
+    @DisplayName("Quando buscar  clientes ativos" +
             "            então retornar clientesDB")
     @Test
     void quandoBuscarClientesAtivos_EntaoRetornarClientes() {
@@ -162,7 +163,7 @@ public class ClienteServiceTest {
         verify(clienteRepository).findByCpfAndAtivoTrue("462.789.844-40");
     }
 
-    @DisplayName("Quando buscar clientesDB inativos" +
+    @DisplayName("Quando buscar clientes inativos" +
             "            então retornar clientesDB")
     @Test
     void quandoBuscarClientesInativos_EntaoRetornarClientes() {
@@ -216,7 +217,6 @@ public class ClienteServiceTest {
 
         when(clienteRepository.findById(UUID.fromString("7ecc1e5b-846c-4e64-ac61-a54b2656e1b3")))
                 .thenReturn(Optional.ofNullable(clientesDB.get(0)));
-        when(mapper.clienteDTOParaModel(clienteDTO.get(1))).thenReturn(clientesParaPersistencia.get(1));
         when(clienteRepository.save(any(ClienteModel.class))).thenReturn(clientesDB.get(2));
 
         var resultado = clienteService.atualizarDadosCliente(UUID.fromString(
@@ -224,8 +224,8 @@ public class ClienteServiceTest {
 
         assertNotNull(resultado);
         verify(clienteRepository).findById(UUID.fromString("7ecc1e5b-846c-4e64-ac61-a54b2656e1b3"));
-        verify(mapper).clienteDTOParaModel(clienteDTO.get(1));
-        verify(clienteRepository).save(clientesParaPersistencia.get(1));
+        ArgumentCaptor<ClienteModel> captor = ArgumentCaptor.forClass(ClienteModel.class);
+        verify(clienteRepository).save(captor.capture());
     }
 
     @DisplayName("Quando atualizar dados do cliente inexistente" +

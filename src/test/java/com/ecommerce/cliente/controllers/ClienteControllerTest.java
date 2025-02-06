@@ -68,7 +68,7 @@ public class ClienteControllerTest {
 
         when(clienteService.registrarCliente(any(ClienteRecordDTO.class))).thenReturn(clientesDB.get(0));
 
-        ResultActions resultado = mock.perform(post("/clientesDB")
+        ResultActions resultado = mock.perform(post("/clientes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(clienteDTO.get(0))));
 
@@ -91,7 +91,7 @@ public class ClienteControllerTest {
 
         when(clienteService.buscarClientesAtivos(any(Pageable.class))).thenReturn(paginaClientes);
 
-        ResultActions resultado = mock.perform(get("/clientesDB")
+        ResultActions resultado = mock.perform(get("/clientes")
                 .param("page", "0")
                 .param("size", "10")
                 .contentType(MediaType.APPLICATION_JSON));
@@ -109,7 +109,7 @@ public class ClienteControllerTest {
         when(clienteService.buscarClienteAtivoPorCpf("745.303.692-50"))
                 .thenReturn(clientesDB.get(0));
 
-        ResultActions resultado = mock.perform(get("/clientesDB/745.303.692-50")
+        ResultActions resultado = mock.perform(get("/clientes/745.303.692-50")
                 .contentType(MediaType.APPLICATION_JSON));
 
         resultado.andDo(print())
@@ -132,7 +132,7 @@ public class ClienteControllerTest {
         when(clienteService.buscarClientesInativos(any(Pageable.class)))
                 .thenReturn(paginaClientes);
 
-        ResultActions resultado = mock.perform(get("/clientesDB/inativos")
+        ResultActions resultado = mock.perform(get("/clientes/inativos")
                 .param("page", "0")
                 .param("size", "10")
                 .contentType(MediaType.APPLICATION_JSON));
@@ -150,7 +150,7 @@ public class ClienteControllerTest {
         when(clienteService.buscarClienteInativoPorCpf("123.456.789-01")).thenReturn(clientesInativosDB.get(0));
 
         ResultActions resultado = mock.perform(
-                get("/clientesDB/inativo/123.456.789-01")
+                get("/clientes/inativo/123.456.789-01")
                 .contentType(MediaType.APPLICATION_JSON));
 
         resultado.andDo(print())
@@ -170,7 +170,7 @@ public class ClienteControllerTest {
                 any(ClienteRecordDTO.class))).thenReturn(clientesDB.get(2));
 
         ResultActions resultado = mock.perform(
-                put("/clientesDB/7ecc1e5b-846c-4e64-ac61-a54b2656e1b3")
+                put("/clientes/7ecc1e5b-846c-4e64-ac61-a54b2656e1b3")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(clienteDTO.get(1))));
 
@@ -190,7 +190,7 @@ public class ClienteControllerTest {
         doNothing().when(clienteService).alternarStatusCliente(any(UUID.class),
                 any(ClienteStatusRecordDTO.class));
         ResultActions resultado = mock.perform(
-                patch("/clientesDB/7ecc1e5b-846c-4e64-ac61-a54b2656e1b3")
+                patch("/clientes/7ecc1e5b-846c-4e64-ac61-a54b2656e1b3")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(clienteStatusDTO)));
 
@@ -206,7 +206,7 @@ public class ClienteControllerTest {
         doNothing().when(clienteService).deletarCliente(any(UUID.class));
 
         ResultActions resultado = mock.perform(
-                delete("/clientesDB/7ecc1e5b-846c-4e64-ac61-a54b2656e1b3"));
+                delete("/clientes/7ecc1e5b-846c-4e64-ac61-a54b2656e1b3"));
 
         resultado.andDo(print())
                 .andExpect(status().isNoContent());
